@@ -10,7 +10,7 @@ Blackjack::Blackjack()
 bool Blackjack::did_player_win()
 {
 	int player_points{ player.get_points() };
-	return game_over && player_points <= 21 && player_points > house.get_points();
+	return game_over && player_points <= 21 && player_points >= house.get_points();
 }
 
 bool Blackjack::play()
@@ -44,7 +44,6 @@ bool Blackjack::play()
 			default:
 			{
 				std::cout << "Unrecognized input\n";
-				print_controls();
 				continue;
 			}
 		}
@@ -60,12 +59,12 @@ bool Blackjack::play()
 		else if (did_player_win())
 		{
 			game_over = true;
-			std::cout << "Player win!\n";
+			std::cout << "Player wins!\n";
 			continue;
 		}
 		else
 		{
-			std::cout << "You have " << player_points << " points.\n";
+			std::cout << "You have " << player_points << " points.";
 			std::cout << "Current cards: ";
 			print_hand(player.get_hand());
 		}
