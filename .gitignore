@@ -1,5 +1,10 @@
 # Prerequisites
+*db*
+*log
 *.d
+*.vs
+*.recipe*
+*.FileListAbsolute*
 
 # Compiled Object files
 *.slo
@@ -8,11 +13,18 @@
 *.obj
 
 # Precompiled Headers
+*pch*
 *.gch
 *.pch
+*.ipch
+*.pdb
+*.idb
+*.ilk
+*.exp
 
 # Compiled Dynamic libraries
 *.so
+*.suo
 *.dylib
 *.dll
 
