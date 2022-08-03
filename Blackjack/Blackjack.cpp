@@ -115,7 +115,7 @@ void Blackjack::check_remaining_cards()
 	{
 		set_game_state(f_game_over);
 		check_player_win();
-		std::cout << "No more cards! Game over!\n";
+		std::cout << "No more cards!\n";
 		print_game_summary();
 	}
 }
