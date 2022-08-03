@@ -49,7 +49,6 @@ private:
 	void player_turn();
 	void print_card(const Card& card);
 	void print_controls();
-	void print_deck(const deck_type& deck);
 	void print_game_summary();
 	void print_hand(const hand_type& hand);
 	void print_welcome();

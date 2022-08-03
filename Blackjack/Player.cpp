@@ -19,7 +19,7 @@ hand_type Player::get_hand()
     return hand;
 }
 
-void Player::get_starting_hand(const Card& first, const Card& second)
+void Player::set_starting_hand(const Card& first, const Card& second)
 {
     hand = { first, second };
     points = get_hand_value();
@@ -38,6 +38,8 @@ int Player::take_turn()
     return input;
 }
 
+// PRIVATE METHODS
+
 int Player::get_hand_value()
 {
     int result{};
@@ -49,8 +51,6 @@ int Player::get_hand_value()
 
     return result;
 }
-
-// PRIVATE METHODS
 
 void Player::set_points()
 {

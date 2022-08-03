@@ -11,9 +11,7 @@ Blackjack::Blackjack()
 bool Blackjack::play()
 {
 	if (get_game_state(f_show_welcome_message))
-	{
 		print_welcome();
-	}
 
 	std::cout << "House and Player have been delt.\n";
 	std::cout << "You have " << player.get_points() << " points.\n";
@@ -161,7 +159,7 @@ void Blackjack::player_turn()
 		case static_cast<int>(Turn::stand):
 		{
 			set_game_state(f_game_over);
-			return;
+			break;
 		}
 
 		case static_cast<int>(Turn::hit):
@@ -218,17 +216,6 @@ void Blackjack::print_controls()
 	std::cout << std::format("Hit = {}, Stand = {}", static_cast<int>(Turn::hit), static_cast<int>(Turn::stand));
 }
 
-void Blackjack::print_deck(const deck_type& d)
-{
-	for (std::size_t i{ 0 }; i < d.size(); ++i)
-	{
-		print_card(d[i]);
-		std::cout << ' ';
-	}
-
-	std::cout << '\n';
-}
-
 void Blackjack::print_game_summary()
 {
 	std::cout << "\nGame over!\n";
@@ -272,11 +259,11 @@ void Blackjack::reset_game()
 	unset_game_state(f_player_won);
 
 	house = Player{};
-	house.get_starting_hand(deck[0], deck[1]);
+	house.set_starting_hand(deck[0], deck[1]);
 	check_house_win();
 
 	player = Player{};
-	player.get_starting_hand(deck[2], deck[3]);
+	player.set_starting_hand(deck[2], deck[3]);
 	check_player_win();
 
 	// next card after player and house has been delt

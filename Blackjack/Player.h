@@ -17,13 +17,13 @@ public:
 
 public:
 	hand_type get_hand();
-	int get_hand_value();
 	int get_points();
-	void get_starting_hand(const Card& first, const Card& second);
+	void set_starting_hand(const Card& first, const Card& second);
 	void take_card(const Card& card);
 	int take_turn();
 
 private:
+	int get_hand_value();
 	void set_points();
 
 private:
