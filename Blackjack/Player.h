@@ -17,16 +17,11 @@ public:
 
 public:
 	hand_type get_hand();
+	int get_hand_value();
 	int get_points();
 	void get_starting_hand(const Card& first, const Card& second);
 	void take_card(const Card& card);
 	int take_turn();
-
-protected:
-	int get_hand_value();
-
-protected:
-	int points;
 
 private:
 	void set_points();
@@ -34,6 +29,7 @@ private:
 private:
 	hand_type hand;
 	int input;
+	int points;
 };
 
 #endif

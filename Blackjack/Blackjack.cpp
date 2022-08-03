@@ -4,89 +4,43 @@
 
 Blackjack::Blackjack()
 {
+	set_game_state(f_show_welcome_message);
 	reset_game();
-}
-
-bool Blackjack::did_player_win()
-{
-	int player_points{ player.get_points() };
-	return game_over && player_points <= 21 && player_points >= house.get_points();
 }
 
 bool Blackjack::play()
 {
-	print_welcome();
-
-	while (!game_over)
+	if (get_game_state(f_show_welcome_message))
 	{
-		++total_turns;
+		print_welcome();
+	}
 
-		if (no_cards_remaining())
-		{
-			game_over = true;
+	std::cout << "House and Player have been delt.\n";
+	std::cout << "You have " << player.get_points() << " points.\n";
+
+	while (!get_game_state(f_game_over))
+	{
+		check_remaining_cards();
+		player_turn();
+		check_player_win();
+
+		// prevent the game from continuing if the
+		// game is already over
+		if (get_game_state(f_game_over))
 			continue;
-		}
 
-		int input{ player.take_turn() };
+		house_turn();
+		check_house_win();
 
-		switch (input)
-		{
-			case static_cast<int>(Turn::hit):
-			{
-				give_card(player);
-				break;
-			}
-			case static_cast<int>(Turn::stand):
-			{
-				game_over = true;
-				continue;
-			}
-			default:
-			{
-				std::cout << "Unrecognized input\n";
-				continue;
-			}
-		}
-
-		int player_points{ player.get_points() };
-
-		if (player_points > 21)
-		{
-			game_over = true;
-			std::cout << "Player has gone over 21 points!\n";
+		// prevent the game from continuing if the
+		// game is already over
+		if (get_game_state(f_game_over))
 			continue;
-		}
-		else if (did_player_win())
-		{
-			game_over = true;
-			std::cout << "Player wins!\n";
-			continue;
-		}
-		else
-		{
-			std::cout << "You have " << player_points << " points.";
-			std::cout << "Current cards: ";
-			print_hand(player.get_hand());
-		}
 
-		std::cout << "\nDealer's turn\n";
-
-		while (house.get_points() < 17)
-		{
-			give_card(house);
-			int house_points{ house.get_points() };
-
-			if (house_points == 21)
-			{
-				game_over = true;
-				std::cout << "House wins with 21 points!\n";
-			}
-			else if (house_points > 21)
-			{
-				game_over = true;
-				std::cout << "House has gone over 21 points!\n";
-			}
-		}
+		std::cout << "You have " << player.get_points() << " points.\n";
+		std::cout << "Current cards: ";
+		print_hand(player.get_hand());
+		std::cout << '\n';
 	}
 
 	print_game_summary();
@@ -95,16 +49,62 @@ bool Blackjack::play()
 	int answer{};
 	std::cin >> answer;
 
-	if (answer > 0)
+	if (answer)
 	{
+		unset_game_state(f_show_welcome_message);
 		reset_game();
 		play();
 	}
 
-	return did_player_win();
+	return (game_state & f_player_won);
 }
 
 // PRIVATE METHODS
+
+void Blackjack::check_house_win()
+{
+	int house_points{ house.get_points() };
+
+	if (house_points == m_maximum_score)
+	{
+		set_game_state(f_game_over);
+	}
+	else if (house_points > m_maximum_score)
+	{
+		set_game_state(f_player_won);
+		set_game_state(f_game_over);
+	}
+}
+
+void Blackjack::check_player_win()
+{
+	int player_points{ player.get_points() };
+	int house_points{ house.get_points() };
+
+	if (player_points == m_maximum_score)
+	{
+		set_game_state(f_player_won);
+		set_game_state(f_game_over);
+	}
+	else if (player_points > m_maximum_score)
+	{
+		set_game_state(f_game_over);
+	}
+	else if ((game_state & f_game_over) && (house_points > m_maximum_score || (player_points <= m_maximum_score && player_points >= house_points)))
+	{
+		set_game_state(f_player_won);
+	}
+}
+
+void Blackjack::check_remaining_cards()
+{
+	if (card_index >= m_total_cards)
+	{
+		set_game_state(f_game_over);
+		std::cout << "No more cards! Game over!\n";
+		print_game_summary();
+	}
+}
 
 deck_type Blackjack::create_deck()
 {
@@ -123,6 +123,19 @@ deck_type Blackjack::create_deck()
 	return newDeck;
 }
 
+void Blackjack::house_turn()
+{
+	std::cout << "Dealer's turn\n";
+
+	while (house.get_points() < m_dealer_threshold)
+		give_card(house);
+}
+
+bool Blackjack::get_game_state(std::uint8_t state)
+{
+	return game_state & state;
+}
+
 Card Blackjack::give_card(Player& p)
 {
 	Card card{ deck[card_index] };
@@ -132,17 +145,32 @@ Card Blackjack::give_card(Player& p)
 	return card;
 }
 
-bool Blackjack::no_cards_remaining()
+void Blackjack::player_turn()
 {
-	if (card_index >= TOTAL_CARDS)
+	++total_turns;
+	int input{ player.take_turn() };
+
+	switch (input)
 	{
-		std::cout << "Game over!\n";
-		print_game_summary();
+		case static_cast<int>(Turn::hit):
+		{
+			give_card(player);
+			check_player_win();
+			break;
+		}
 
-		return true;
+		case static_cast<int>(Turn::stand):
+		{
+			set_game_state(f_game_over);
+			return;
+		}
+
+		default:
+		{
+			std::cout << "Unrecognized choice\n";
+			break;
+		}
 	}
-
-	return false;
 }
 
 void Blackjack::print_card(const Card& card)
@@ -197,18 +225,15 @@ void Blackjack::print_deck(const deck_type& d)
 
 void Blackjack::print_game_summary()
 {
+	std::cout << "\nGame over!\n";
 	std::cout << "Player had " << player.get_points() << " points\n";
 	std::cout << "House had " << house.get_points() << " points\n";
 	std::cout << "Game took " << total_turns << " turn to complete\n";
 
-	if (did_player_win())
-	{
+	if ((game_state & f_player_won))
 		std::cout << "Player wins with " << player.get_points() << " points!\n";
-	}
 	else
-	{
 		std::cout << "House wins with " << house.get_points() << " points!\n";
-	}
 }
 
 void Blackjack::print_hand(const hand_type& hand)
@@ -226,8 +251,6 @@ void Blackjack::print_welcome()
 	std::cout << "Instructions: ";
 	print_controls();
 	std::cout << "\nGet the closest to 21 points as you can.\nIf you hit 21 points exactly, you win!\nHave less than the dealer when you choose to stand and you lose!\n";
-	std::cout << "House and Player have been delt.\n";
-	std::cout << "You have " << player.get_points() << " points.\n";
 }
 
 void Blackjack::reset_game()
@@ -235,20 +258,34 @@ void Blackjack::reset_game()
 	deck = create_deck();
 	shuffle_deck(deck);
 
-	house = House{};
+	unset_game_state(f_game_over);
+	unset_game_state(f_player_won);
+
+	house = Player{};
 	house.get_starting_hand(deck[0], deck[1]);
+	check_house_win();
 
 	player = Player{};
 	player.get_starting_hand(deck[2], deck[3]);
+	check_player_win();
 
 	// next card after player and house has been delt
 	card_index = 4;
-	game_over = false;
 	total_turns = 0;
+}
+
+void Blackjack::set_game_state(std::uint8_t state)
+{
+	game_state |= state;
 }
 
 void Blackjack::shuffle_deck(deck_type& d)
 {
 	std::mt19937 mt{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 	std::shuffle(std::begin(d), std::end(d), mt);
+}
+
+void Blackjack::unset_game_state(uint8_t state)
+{
+	game_state &= ~state;
 }

@@ -21,9 +21,6 @@
     <ClInclude Include="..\Blackjack\Card.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Blackjack\House.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Blackjack\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -33,9 +30,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Blackjack\Blackjack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Blackjack\House.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Blackjack\Player.cpp">

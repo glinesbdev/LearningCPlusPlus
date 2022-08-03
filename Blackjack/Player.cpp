@@ -39,8 +39,6 @@ int Player::take_turn()
     return input;
 }
 
-// PROTECTED METHODS
-
 int Player::get_hand_value()
 {
     int result{};
