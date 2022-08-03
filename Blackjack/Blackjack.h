@@ -27,6 +27,7 @@ class Blackjack
 	static constexpr int m_total_cards = 52;
 	static constexpr int m_maximum_score = 21;
 	static constexpr int m_dealer_threshold = 17;
+	static constexpr int m_default_card_value = 2;
 
 	// Game state flags
 	static constexpr uint8_t f_show_welcome_message{ 1 << 0 };

@@ -32,10 +32,14 @@ enum class CardSuit
 
 struct Card
 {
+	static constexpr int m_maximum_value = 21;
+	static constexpr int m_ace_high = 11;
+	static constexpr int m_ace_low = 1;
+
 	CardRank rank{};
 	CardSuit suit{};
 
-	int get_value(int player_points) const
+	int get_value(int player_points = 0) const
 	{
 		switch (rank)
 		{
@@ -53,10 +57,10 @@ struct Card
 			case CardRank::rank_king:	return 10;
 			case CardRank::rank_ace:
 			{
-				if (player_points + 11 > 21)
-					return 1;
+				if (player_points + m_ace_high > m_maximum_value)
+					return m_ace_low;
 
-				return 11;
+				return m_ace_high;
 			}
 			default:					return 0;
 		}

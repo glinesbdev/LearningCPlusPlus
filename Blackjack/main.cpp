@@ -1,4 +1,5 @@
 #include "Blackjack.h"
+#include <format>
 #include <iostream>
 
 int main()
@@ -8,7 +9,7 @@ int main()
 	bool did_player_win{ game.play() };
 
 	std::cout << std::boolalpha;
-	std::cout << "Did the player win? " << did_player_win << '\n';
+	std::cout << std::format("Did the player win? {}\n", did_player_win);
 
 	return 0;
 }

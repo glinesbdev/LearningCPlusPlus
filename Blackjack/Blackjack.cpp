@@ -16,8 +16,8 @@ bool Blackjack::play()
 	if (get_game_state(f_show_welcome_message))
 		print_welcome();
 
-	std::cout << "House and Player have been delt.\n";
-	std::cout << "You have " << player.get_points() << " points.\n";
+	std::cout << "House and Player have been delt\n";
+	std::cout << std::format("You have {} points\n", player.get_points());
 
 	while (!get_game_state(f_game_over))
 	{
@@ -38,7 +38,7 @@ bool Blackjack::play()
 		if (get_game_state(f_game_over))
 			continue;
 
-		std::cout << "You have " << player.get_points() << " points.\n";
+		std::cout << std::format("You have {} points\n", player.get_points());
 		std::cout << "Current cards: ";
 		print_hand(player.get_hand());
 		std::cout << '\n';
@@ -131,7 +131,8 @@ deck_type Blackjack::create_deck()
 	{
 		for (int rank{ 0 }; rank < static_cast<int>(CardRank::max_ranks); ++rank)
 		{
-			new_deck[index] = { static_cast<CardRank>(rank), static_cast<CardSuit>(suit) };
+			new_deck[index].rank = static_cast<CardRank>(rank);
+			new_deck[index].suit = static_cast<CardSuit>(suit);
 			++index;
 		}
 	}
@@ -167,7 +168,6 @@ void Blackjack::player_turn()
 
 	std::cout << "Your turn\n";
 	print_controls();
-	std::cout << '\n';
 
 	int input{ player.take_turn() };
 
@@ -188,7 +188,7 @@ void Blackjack::player_turn()
 
 		default:
 		{
-			std::cout << "Unrecognized choice\n";
+			std::cout << "\nUnrecognized choice\n\n";
 			break;
 		}
 	}
@@ -196,27 +196,45 @@ void Blackjack::player_turn()
 
 void Blackjack::print_controls()
 {
-	std::cout << std::format("Hit = {}, Stand = {}", static_cast<int>(Turn::hit), static_cast<int>(Turn::stand));
+	std::cout << std::format("Hit = {}, Stand = {}: ", static_cast<int>(Turn::hit), static_cast<int>(Turn::stand));
 }
 
 void Blackjack::print_game_summary()
 {
-	std::cout << "\nGame over!\n";
-	std::cout << "Player had " << player.get_points() << " points\n";
+	if (get_game_state(f_player_won))
+	{				 
+		std::cout << "\n\n********************\n";
+		std::cout << "*                  *\n";
+		std::cout << "*    Player Won!   *\n";
+		std::cout << "*                  *\n";
+		std::cout << "********************\n\n";
+	}
+	else if (get_game_state(f_game_tie))
+	{
+		std::cout << "\n\n********************\n";
+		std::cout << "*                  *\n";
+		std::cout << "*       Tie!       *\n";
+		std::cout << "*                  *\n";
+		std::cout << "********************\n\n";
+	}
+	else
+	{
+		std::cout << "\n\n********************\n";
+		std::cout << "*                  *\n";
+		std::cout << "*    House Won!    *\n";
+		std::cout << "*                  *\n";
+		std::cout << "********************\n\n";
+	}
 
 	std::cout << "Player had ";
 	print_hand(player.get_hand());
 	std::cout << "cards in their hand\n";
 
-	std::cout << "House had " << house.get_points() << " points\n";
-	std::cout << "Game took " << total_turns << " turn to complete\n";
+	std::cout << std::format("Player had {} points\n", player.get_points());
+	std::cout << std::format("House had {} points\n", house.get_points());
+	std::cout << std::format("Game took {} turns to complete\n\n", total_turns);
 
-	if (get_game_state(f_player_won))
-		std::cout << "Player wins with " << player.get_points() << " points!\n";
-	else if (get_game_state(f_game_tie))
-		std::cout << "The game ended in a tie of " << player.get_points() << " points!\n";
-	else
-		std::cout << "House wins with " << house.get_points() << " points!\n";
+	
 }
 
 void Blackjack::print_hand(const hand_type& hand)
@@ -230,8 +248,7 @@ void Blackjack::print_hand(const hand_type& hand)
 
 void Blackjack::print_welcome()
 {
-	std::cout << "Welcome to Blackjack!\n";
-	std::cout << "Instructions: ";
+	std::cout << "Welcome to Blackjack!\nInstructions: ";
 	print_controls();
 	std::cout << "\nGet the closest to 21 points as you can.\nIf you hit 21 points exactly, you win!\nHave less than the dealer when you choose to stand and you lose!\n";
 }
@@ -240,7 +257,15 @@ void Blackjack::reset_game()
 {
 	// All the cards will be 2 points if the deck wasn't created yet.
 	// Prevent a new deck from being created if the player plays more than 1 round.
-	if (std::all_of(std::begin(deck), std::end(deck), [](const Card& card) { return card.get_value(0) == 2; }))
+	auto has_default_value
+	{
+		[](const Card& card)
+		{
+			return card.get_value() == m_default_card_value;
+		}
+	};
+
+	if (std::all_of(std::begin(deck), std::end(deck), has_default_value))
 		deck = create_deck();
 
 	shuffle_deck(deck);
