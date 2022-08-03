@@ -147,7 +147,7 @@ void Blackjack::house_turn()
 		give_card(house);
 }
 
-bool Blackjack::get_game_state(std::uint8_t state)
+bool Blackjack::get_game_state(uint8_t state)
 {
 	return game_state & state;
 }
@@ -258,7 +258,7 @@ void Blackjack::reset_game()
 	total_turns = 0;
 }
 
-void Blackjack::set_game_state(std::uint8_t state)
+void Blackjack::set_game_state(uint8_t state)
 {
 	game_state |= state;
 }
