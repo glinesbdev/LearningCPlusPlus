@@ -47,7 +47,7 @@ private:
 	void check_remaining_cards();
 	deck_type create_deck();
 	bool get_game_state(uint8_t state);
-	Card give_card(Player& player);
+	Card& give_card(Player& player);
 	void house_turn();
 	void player_turn();
 	void print_controls();

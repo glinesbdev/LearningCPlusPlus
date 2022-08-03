@@ -152,9 +152,9 @@ bool Blackjack::get_game_state(uint8_t state)
 	return game_state & state;
 }
 
-Card Blackjack::give_card(Player& p)
+Card& Blackjack::give_card(Player& p)
 {
-	Card card{ deck[card_index] };
+	Card& card{ deck[card_index] };
 	p.take_card(card);
 	++card_index;
 
