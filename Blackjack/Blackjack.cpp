@@ -101,6 +101,7 @@ void Blackjack::check_remaining_cards()
 	if (card_index >= m_total_cards)
 	{
 		set_game_state(f_game_over);
+		check_player_win();
 		std::cout << "No more cards! Game over!\n";
 		print_game_summary();
 	}
@@ -108,19 +109,19 @@ void Blackjack::check_remaining_cards()
 
 deck_type Blackjack::create_deck()
 {
-	deck_type newDeck{};
+	deck_type new_deck{};
 	index_type index{ 0 };
 
 	for (int suit{ 0 }; suit < static_cast<int>(CardSuit::max_suit); ++suit)
 	{
 		for (int rank{ 0 }; rank < static_cast<int>(CardRank::max_ranks); ++rank)
 		{
-			newDeck[index] = { static_cast<CardRank>(rank), static_cast<CardSuit>(suit) };
+			new_deck[index] = { static_cast<CardRank>(rank), static_cast<CardSuit>(suit) };
 			++index;
 		}
 	}
 
-	return newDeck;
+	return new_deck;
 }
 
 void Blackjack::house_turn()
@@ -260,7 +261,11 @@ void Blackjack::print_welcome()
 
 void Blackjack::reset_game()
 {
-	deck = create_deck();
+	// All the cards will be 2 points if the deck wasn't created yet.
+	// Prevent a new deck from being created if the player plays more than 1 round.
+	if (deck.at(0).get_value() == 2 && deck.at(1).get_value() == 2)
+		deck = create_deck();
+
 	shuffle_deck(deck);
 
 	unset_game_state(f_game_over);

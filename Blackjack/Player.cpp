@@ -8,6 +8,7 @@ Player::Player()
     input = 0;
     points = 0;
 }
+
 int Player::get_points()
 {
     return points;
