@@ -4,6 +4,7 @@
 #include "Card.h"
 #include "Player.h"
 
+#include <algorithm>
 #include <array>
 #include <ctime>
 #include <format>

@@ -263,7 +263,7 @@ void Blackjack::reset_game()
 {
 	// All the cards will be 2 points if the deck wasn't created yet.
 	// Prevent a new deck from being created if the player plays more than 1 round.
-	if (deck.at(0).get_value() == 2 && deck.at(1).get_value() == 2)
+	if (std::all_of(std::begin(deck), std::end(deck), [](Card& card) { return card.get_value() == 2; }))
 		deck = create_deck();
 
 	shuffle_deck(deck);
