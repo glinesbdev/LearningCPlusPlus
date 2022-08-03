@@ -17,18 +17,20 @@ using index_type = deck_type::size_type;
 
 enum class Turn
 {
-	hit,
 	stand,
+	hit,
 };
 
 class Blackjack
 {
+	// Game constants
 	static constexpr int m_total_cards = 52;
 	static constexpr int m_maximum_score = 21;
 	static constexpr int m_dealer_threshold = 17;
 
-	static constexpr uint8_t f_game_over{ 1 << 0 };
-	static constexpr uint8_t f_show_welcome_message{ 1 << 1 };
+	// Game state flags
+	static constexpr uint8_t f_show_welcome_message{ 1 << 0 };
+	static constexpr uint8_t f_game_over{ 1 << 1 };
 	static constexpr uint8_t f_player_won{ 1 << 2 };
 
 public:

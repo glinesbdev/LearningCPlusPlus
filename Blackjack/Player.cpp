@@ -32,8 +32,6 @@ void Player::take_card(const Card& card)
 
 int Player::take_turn()
 {
-    std::cout << "Your turn\n";
-    std::cout << "Hit = 0 or Stand = 1? ";
     std::cin >> input;
 
     return input;

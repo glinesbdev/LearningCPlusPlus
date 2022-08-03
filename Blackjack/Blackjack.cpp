@@ -56,7 +56,7 @@ bool Blackjack::play()
 		play();
 	}
 
-	return (game_state & f_player_won);
+	return get_game_state(f_player_won);
 }
 
 // PRIVATE METHODS
@@ -90,7 +90,7 @@ void Blackjack::check_player_win()
 	{
 		set_game_state(f_game_over);
 	}
-	else if ((game_state & f_game_over) && (house_points > m_maximum_score || (player_points <= m_maximum_score && player_points >= house_points)))
+	else if (get_game_state(f_game_over) && (house_points > m_maximum_score || (player_points <= m_maximum_score && player_points >= house_points)))
 	{
 		set_game_state(f_player_won);
 	}
@@ -148,21 +148,26 @@ Card Blackjack::give_card(Player& p)
 void Blackjack::player_turn()
 {
 	++total_turns;
+
+	std::cout << "Your turn\n";
+	print_controls();
+	std::cout << '\n';
+
 	int input{ player.take_turn() };
 
 	switch (input)
 	{
+		case static_cast<int>(Turn::stand):
+		{
+			set_game_state(f_game_over);
+			return;
+		}
+
 		case static_cast<int>(Turn::hit):
 		{
 			give_card(player);
 			check_player_win();
 			break;
-		}
-
-		case static_cast<int>(Turn::stand):
-		{
-			set_game_state(f_game_over);
-			return;
 		}
 
 		default:
@@ -230,7 +235,7 @@ void Blackjack::print_game_summary()
 	std::cout << "House had " << house.get_points() << " points\n";
 	std::cout << "Game took " << total_turns << " turn to complete\n";
 
-	if ((game_state & f_player_won))
+	if (get_game_state(f_player_won))
 		std::cout << "Player wins with " << player.get_points() << " points!\n";
 	else
 		std::cout << "House wins with " << house.get_points() << " points!\n";
