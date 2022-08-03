@@ -31,6 +31,7 @@ class Blackjack
 	static constexpr uint8_t f_show_welcome_message{ 1 << 0 };
 	static constexpr uint8_t f_game_over{ 1 << 1 };
 	static constexpr uint8_t f_player_won{ 1 << 2 };
+	static constexpr uint8_t f_game_tie{ 1 << 3 };
 
 public:
 	Blackjack();
@@ -40,6 +41,7 @@ public:
 
 private:
 	void check_house_win();
+	void check_game_tie();
 	void check_player_win();
 	void check_remaining_cards();
 	deck_type create_deck();

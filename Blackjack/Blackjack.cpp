@@ -72,6 +72,19 @@ void Blackjack::check_house_win()
 		set_game_state(f_player_won);
 		set_game_state(f_game_over);
 	}
+
+	check_game_tie();
+}
+
+void Blackjack::check_game_tie()
+{
+	int player_points{ player.get_points() };
+	int house_points{ house.get_points() };
+
+	if (get_game_state(f_game_over) && player_points == house_points)
+	{
+		set_game_state(f_game_tie);
+	}
 }
 
 void Blackjack::check_player_win()
@@ -88,10 +101,12 @@ void Blackjack::check_player_win()
 	{
 		set_game_state(f_game_over);
 	}
-	else if (get_game_state(f_game_over) && (house_points > m_maximum_score || (player_points <= m_maximum_score && player_points >= house_points)))
+	else if (get_game_state(f_game_over) && (house_points > m_maximum_score || (player_points <= m_maximum_score && player_points > house_points)))
 	{
 		set_game_state(f_player_won);
 	}
+
+	check_game_tie();
 }
 
 void Blackjack::check_remaining_cards()
@@ -225,6 +240,8 @@ void Blackjack::print_game_summary()
 
 	if (get_game_state(f_player_won))
 		std::cout << "Player wins with " << player.get_points() << " points!\n";
+	else if (get_game_state(f_game_tie))
+		std::cout << "The game ended in a tie of " << player.get_points() << " points!\n";
 	else
 		std::cout << "House wins with " << house.get_points() << " points!\n";
 }
@@ -257,6 +274,7 @@ void Blackjack::reset_game()
 
 	unset_game_state(f_game_over);
 	unset_game_state(f_player_won);
+	unset_game_state(f_game_tie);
 
 	house = Player{};
 	house.set_starting_hand(deck[0], deck[1]);
