@@ -235,6 +235,11 @@ void Blackjack::print_game_summary()
 {
 	std::cout << "\nGame over!\n";
 	std::cout << "Player had " << player.get_points() << " points\n";
+
+	std::cout << "Player had ";
+	print_hand(player.get_hand());
+	std::cout << "cards in their hand\n";
+
 	std::cout << "House had " << house.get_points() << " points\n";
 	std::cout << "Game took " << total_turns << " turn to complete\n";
 
@@ -267,7 +272,7 @@ void Blackjack::reset_game()
 {
 	// All the cards will be 2 points if the deck wasn't created yet.
 	// Prevent a new deck from being created if the player plays more than 1 round.
-	if (std::all_of(std::begin(deck), std::end(deck), [](Card& card) { return card.get_value() == 2; }))
+	if (std::all_of(std::begin(deck), std::end(deck), [](Card& card) { return card.get_value(0) == 2; }))
 		deck = create_deck();
 
 	shuffle_deck(deck);

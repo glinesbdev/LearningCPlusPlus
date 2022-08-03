@@ -46,7 +46,7 @@ int Player::get_hand_value()
 
     for (auto& card : hand)
     {
-        result += card.get_value();
+        result += card.get_value(points);
     }
 
     return result;

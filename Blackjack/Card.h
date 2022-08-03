@@ -33,7 +33,7 @@ struct Card
 	CardRank rank{};
 	CardSuit suit{};
 
-	int get_value()
+	int get_value(int player_points)
 	{
 		switch (rank)
 		{
@@ -49,7 +49,13 @@ struct Card
 			case CardRank::rank_jack:	return 10;
 			case CardRank::rank_queen:	return 10;
 			case CardRank::rank_king:	return 10;
-			case CardRank::rank_ace:	return 11;
+			case CardRank::rank_ace:
+			{
+				if (player_points + 11 > 21)
+					return 1;
+
+				return 11;
+			}
 			default:					return 0;
 		}
 	}
