@@ -10,6 +10,7 @@
 #include <format>
 #include <iostream>
 #include <random>
+#include <vector>
 
 using deck_type = std::array<Card, 52>;
 using index_type = deck_type::size_type;
@@ -49,15 +50,16 @@ private:
 	Card give_card(Player& player);
 	void house_turn();
 	void player_turn();
-	void print_card(const Card& card);
 	void print_controls();
 	void print_game_summary();
 	void print_hand(const hand_type& hand);
 	void print_welcome();
 	void reset_game();
 	void set_game_state(uint8_t state);
+	void set_game_states(const std::vector<uint8_t>& states);
 	void shuffle_deck(deck_type& deck);
 	void unset_game_state(uint8_t state);
+	void unset_game_states(const std::vector<uint8_t>& states);
 
 private:
 	index_type card_index;

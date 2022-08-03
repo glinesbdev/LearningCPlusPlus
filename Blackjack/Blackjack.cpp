@@ -4,6 +4,9 @@
 
 Blackjack::Blackjack()
 {
+	house = Player{};
+	player = Player{};
+
 	set_game_state(f_show_welcome_message);
 	reset_game();
 }
@@ -69,8 +72,7 @@ void Blackjack::check_house_win()
 	}
 	else if (house_points > m_maximum_score)
 	{
-		set_game_state(f_player_won);
-		set_game_state(f_game_over);
+		set_game_states({ f_player_won, f_game_over });
 	}
 
 	check_game_tie();
@@ -94,8 +96,7 @@ void Blackjack::check_player_win()
 
 	if (player_points == m_maximum_score)
 	{
-		set_game_state(f_player_won);
-		set_game_state(f_game_over);
+		set_game_states({ f_player_won, f_game_over });
 	}
 	else if (player_points > m_maximum_score)
 	{
@@ -115,6 +116,7 @@ void Blackjack::check_remaining_cards()
 	{
 		set_game_state(f_game_over);
 		check_player_win();
+		check_house_win();
 		std::cout << "No more cards!\n";
 		print_game_summary();
 	}
@@ -192,40 +194,6 @@ void Blackjack::player_turn()
 	}
 }
 
-void Blackjack::print_card(const Card& card)
-{
-	switch (card.rank)
-	{
-		case CardRank::rank_2:		std::cout << '2';	break;
-		case CardRank::rank_3:		std::cout << '3';	break;
-		case CardRank::rank_4:		std::cout << '4';	break;
-		case CardRank::rank_5:		std::cout << '5';	break;
-		case CardRank::rank_6:		std::cout << '6';	break;
-		case CardRank::rank_7:		std::cout << '7';	break;
-		case CardRank::rank_8:		std::cout << '8';	break;
-		case CardRank::rank_9:		std::cout << '9';	break;
-		case CardRank::rank_10:		std::cout << 'T';	break;
-		case CardRank::rank_jack:	std::cout << 'J';	break;
-		case CardRank::rank_queen:	std::cout << 'Q';	break;
-		case CardRank::rank_king:	std::cout << 'K';	break;
-		case CardRank::rank_ace:	std::cout << 'A';	break;
-		default:
-			std::cout << '?';
-			break;
-	}
-
-	switch (card.suit)
-	{
-		case CardSuit::clubs:		std::cout << 'C';	break;
-		case CardSuit::diamonds:	std::cout << 'D';	break;
-		case CardSuit::hearts:		std::cout << 'H';	break;
-		case CardSuit::spades:		std::cout << 'S';	break;
-		default:
-			std::cout << '?';
-			break;
-	}
-}
-
 void Blackjack::print_controls()
 {
 	std::cout << std::format("Hit = {}, Stand = {}", static_cast<int>(Turn::hit), static_cast<int>(Turn::stand));
@@ -255,7 +223,7 @@ void Blackjack::print_hand(const hand_type& hand)
 {
 	for (auto& card : hand)
 	{
-		print_card(card);
+		card.print();
 		std::cout << ' ';
 	}
 }
@@ -272,20 +240,16 @@ void Blackjack::reset_game()
 {
 	// All the cards will be 2 points if the deck wasn't created yet.
 	// Prevent a new deck from being created if the player plays more than 1 round.
-	if (std::all_of(std::begin(deck), std::end(deck), [](Card& card) { return card.get_value(0) == 2; }))
+	if (std::all_of(std::begin(deck), std::end(deck), [](const Card& card) { return card.get_value(0) == 2; }))
 		deck = create_deck();
 
 	shuffle_deck(deck);
 
-	unset_game_state(f_game_over);
-	unset_game_state(f_player_won);
-	unset_game_state(f_game_tie);
+	unset_game_states({ f_game_over, f_player_won, f_game_tie });
 
-	house = Player{};
 	house.set_starting_hand(deck[0], deck[1]);
 	check_house_win();
 
-	player = Player{};
 	player.set_starting_hand(deck[2], deck[3]);
 	check_player_win();
 
@@ -299,6 +263,11 @@ void Blackjack::set_game_state(std::uint8_t state)
 	game_state |= state;
 }
 
+void Blackjack::set_game_states(const std::vector<uint8_t>& states)
+{
+	std::for_each(states.begin(), states.end(), [this](uint8_t state) { set_game_state(state); });
+}
+
 void Blackjack::shuffle_deck(deck_type& d)
 {
 	std::mt19937 mt{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
@@ -308,4 +277,9 @@ void Blackjack::shuffle_deck(deck_type& d)
 void Blackjack::unset_game_state(uint8_t state)
 {
 	game_state &= ~state;
+}
+
+void Blackjack::unset_game_states(const std::vector<uint8_t>& states)
+{
+	std::for_each(states.begin(), states.end(), [this](uint8_t state) { unset_game_state(state); });
 }
