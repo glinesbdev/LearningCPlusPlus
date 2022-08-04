@@ -24,10 +24,10 @@ enum class Turn
 class Blackjack
 {
 	// Game constants
-	static constexpr int m_total_cards = 52;
-	static constexpr int m_maximum_score = 21;
-	static constexpr int m_dealer_threshold = 17;
-	static constexpr int m_default_card_value = 2;
+	static constexpr uint8_t m_total_cards{ 52 };
+	static constexpr uint8_t m_maximum_score{ 21 };
+	static constexpr uint8_t m_dealer_threshold{ 17 };
+	static constexpr uint8_t m_default_card_value{ 2 };
 
 	// Game state flags
 	static constexpr uint8_t f_show_welcome_message{ 1 << 0 };
@@ -63,12 +63,12 @@ private:
 	void unset_game_states(const std::vector<uint8_t>& states);
 
 private:
-	index_type card_index;
-	deck_type deck;
-	uint8_t game_state;
-	Player house;
-	Player player;
-	int total_turns;
+	index_type card_index{};
+	deck_type deck{};
+	uint8_t game_state{ f_show_welcome_message };
+	Player house{};
+	Player player{};
+	int total_turns{ 0 };
 };
 
 #endif

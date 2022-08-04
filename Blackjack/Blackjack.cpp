@@ -4,10 +4,6 @@
 
 Blackjack::Blackjack()
 {
-	house = Player{};
-	player = Player{};
-
-	set_game_state(f_show_welcome_message);
 	reset_game();
 }
 
@@ -80,10 +76,7 @@ void Blackjack::check_house_win()
 
 void Blackjack::check_game_tie()
 {
-	int player_points{ player.get_points() };
-	int house_points{ house.get_points() };
-
-	if (get_game_state(f_game_over) && player_points == house_points)
+	if (get_game_state(f_game_over) && player.get_points() == house.get_points())
 	{
 		set_game_state(f_game_tie);
 	}
@@ -233,8 +226,6 @@ void Blackjack::print_game_summary()
 	std::cout << std::format("Player had {} points\n", player.get_points());
 	std::cout << std::format("House had {} points\n", house.get_points());
 	std::cout << std::format("Game took {} turns to complete\n\n", total_turns);
-
-	
 }
 
 void Blackjack::print_hand(const hand_type& hand)

@@ -1,6 +1,7 @@
 #ifndef CARD_H
 #define CARD_H
 
+#include <cassert>
 #include <iostream>
 
 enum class CardRank
@@ -32,42 +33,33 @@ enum class CardSuit
 
 struct Card
 {
-	static constexpr int m_maximum_value = 21;
-	static constexpr int m_ace_high = 11;
-	static constexpr int m_ace_low = 1;
-
+public:
 	CardRank rank{};
 	CardSuit suit{};
 
 	int get_value(int player_points = 0) const
 	{
-		switch (rank)
-		{
-			case CardRank::rank_2:		return 2;
-			case CardRank::rank_3:		return 3;
-			case CardRank::rank_4:		return 4;
-			case CardRank::rank_5:		return 5;
-			case CardRank::rank_6:		return 6;
-			case CardRank::rank_7:		return 7;
-			case CardRank::rank_8:		return 8;
-			case CardRank::rank_9:		return 9;
-			case CardRank::rank_10:		return 10;
-			case CardRank::rank_jack:	return 10;
-			case CardRank::rank_queen:	return 10;
-			case CardRank::rank_king:	return 10;
-			case CardRank::rank_ace:
-			{
-				if (player_points + m_ace_high > m_maximum_value)
-					return m_ace_low;
+		assert((rank >= CardRank::rank_2 || rank <= CardRank::max_ranks) && "Error: invalid card rank");
 
-				return m_ace_high;
-			}
-			default:					return 0;
+		if (rank < CardRank::rank_jack)
+		{
+			return static_cast<int>(rank) + offset;
 		}
+		else if (rank == CardRank::rank_ace)
+		{
+			if (player_points + m_ace_high > m_maximum_value)
+				return m_ace_low;
+
+			return m_ace_high;
+		}
+
+		return 10;
 	}
 
 	void print() const
 	{
+		assert((rank >= CardRank::rank_2 || rank <= CardRank::max_ranks) && "Error: invalid card rank");
+
 		switch (rank)
 		{
 			case CardRank::rank_2:		std::cout << '2';	break;
@@ -99,6 +91,13 @@ struct Card
 				break;
 		}
 	}
+
+private:
+	static constexpr uint8_t m_maximum_value{21};
+	static constexpr uint8_t m_ace_high{11};
+	static constexpr uint8_t m_ace_low{1};
+
+	int offset{ 2 - static_cast<int>(CardRank::rank_2) };
 };
 
 #endif

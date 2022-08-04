@@ -13,9 +13,6 @@ using hand_type = std::vector<Card>;
 class Player
 {
 public:
-	Player();
-
-public:
 	hand_type get_hand();
 	int get_points();
 	void set_starting_hand(const Card& first, const Card& second);
@@ -27,9 +24,9 @@ private:
 	void set_points();
 
 private:
-	hand_type hand;
-	int input;
-	int points;
+	hand_type hand{};
+	int input{};
+	int points{};
 };
 
 #endif
