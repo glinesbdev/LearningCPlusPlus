@@ -42,9 +42,9 @@ public:
 	void set_suit(CardSuit card_suit);
 
 private:
-	static constexpr uint8_t m_maximum_value{21};
-	static constexpr uint8_t m_ace_high{11};
-	static constexpr uint8_t m_ace_low{1};
+	inline static constexpr const uint8_t m_maximum_value{21};
+	inline static constexpr const uint8_t m_ace_high{11};
+	inline static constexpr const uint8_t m_ace_low{1};
 
 	int offset{ 2 - static_cast<int>(CardRank::rank_2) };
 

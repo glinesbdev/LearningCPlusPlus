@@ -9,14 +9,14 @@ Blackjack::Blackjack()
 
 Blackjack::GameStats Blackjack::play()
 {
-	if (get_game_state(f_show_welcome_message))
+	if (has_game_state(f_show_welcome_message))
 		print_welcome();
 
 	std::cout << "House and Player have been delt\n";
 	std::cout << std::format("You have {} points\n", player.get_points());
 	player.print_hand();
 
-	while (!get_game_state(f_game_over))
+	while (!has_game_state(f_game_over))
 	{
 		check_remaining_cards();
 		player_turn();
@@ -24,7 +24,7 @@ Blackjack::GameStats Blackjack::play()
 
 		// prevent the game from continuing if the
 		// game is already over
-		if (get_game_state(f_game_over))
+		if (has_game_state(f_game_over))
 			continue;
 
 		house_turn();
@@ -32,7 +32,7 @@ Blackjack::GameStats Blackjack::play()
 
 		// prevent the game from continuing if the
 		// game is already over
-		if (get_game_state(f_game_over))
+		if (has_game_state(f_game_over))
 			continue;
 
 		std::cout << std::format("You have {} points\n", player.get_points());
@@ -75,7 +75,7 @@ void Blackjack::check_house_win()
 
 void Blackjack::check_game_tie()
 {
-	if (get_game_state(f_game_over) && player.get_points() == house.get_points())
+	if (has_game_state(f_game_over) && player.get_points() == house.get_points())
 	{
 		set_game_state(f_game_tie);
 	}
@@ -94,7 +94,7 @@ void Blackjack::check_player_win()
 	{
 		set_game_state(f_game_over);
 	}
-	else if (get_game_state(f_game_over) && (house_points > m_maximum_score || (player_points <= m_maximum_score && player_points > house_points)))
+	else if (has_game_state(f_game_over) && (house_points > m_maximum_score || (player_points <= m_maximum_score && player_points > house_points)))
 	{
 		set_game_state(f_player_won);
 	}
@@ -132,17 +132,17 @@ deck_type Blackjack::create_deck()
 	return new_deck;
 }
 
+bool Blackjack::has_game_state(std::byte state)
+{
+	return static_cast<bool>(game_state & state);
+}
+
 void Blackjack::house_turn()
 {
 	std::cout << "Dealer's turn\n";
 
 	while (house.get_points() < m_dealer_threshold)
 		give_card(house);
-}
-
-bool Blackjack::get_game_state(std::byte state)
-{
-	return static_cast<bool>(game_state & state);
 }
 
 Card& Blackjack::give_card(Player& p)
@@ -193,7 +193,7 @@ void Blackjack::print_controls()
 
 void Blackjack::print_game_summary()
 {
-	if (get_game_state(f_player_won))
+	if (has_game_state(f_player_won))
 	{				 
 		game_stats.games_won += 1;
 
@@ -203,7 +203,7 @@ void Blackjack::print_game_summary()
 		std::cout << "*                  *\n";
 		std::cout << "********************\n\n";
 	}
-	else if (get_game_state(f_game_tie))
+	else if (has_game_state(f_game_tie))
 	{
 		game_stats.games_tied += 1;
 

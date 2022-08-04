@@ -44,8 +44,8 @@ private:
 	void check_player_win();
 	void check_remaining_cards();
 	deck_type create_deck();
-	bool get_game_state(std::byte state);
 	Card& give_card(Player& player);
+	bool has_game_state(std::byte state);
 	void house_turn();
 	void player_turn();
 	void print_controls();
@@ -60,16 +60,16 @@ private:
 
 private:
 	// Game constants
-	static constexpr uint8_t m_total_cards{ 52 };
-	static constexpr uint8_t m_maximum_score{ 21 };
-	static constexpr uint8_t m_dealer_threshold{ 17 };
-	static constexpr uint8_t m_default_card_value{ 2 };
+	inline static constexpr const uint8_t m_total_cards{ 52 };
+	inline static constexpr const uint8_t m_maximum_score{ 21 };
+	inline static constexpr const uint8_t m_dealer_threshold{ 17 };
+	inline static constexpr const uint8_t m_default_card_value{ 2 };
 
 	// Game state flags
-	static constexpr std::byte f_show_welcome_message{ 1 << 0 };
-	static constexpr std::byte f_game_over{ 1 << 1 };
-	static constexpr std::byte f_player_won{ 1 << 2 };
-	static constexpr std::byte f_game_tie{ 1 << 3 };
+	inline static constexpr const std::byte f_show_welcome_message{ 1 << 0 };
+	inline static constexpr const std::byte f_game_over{ 1 << 1 };
+	inline static constexpr const std::byte f_player_won{ 1 << 2 };
+	inline static constexpr const std::byte f_game_tie{ 1 << 3 };
 
 	deck_type deck{};
 	Player house;
