@@ -31,66 +31,15 @@ enum class CardSuit
 	max_suit,
 };
 
-struct Card
+class Card
 {
 public:
-	CardRank rank{};
-	CardSuit suit{};
-
-	int get_value(int player_points = 0) const
-	{
-		assert((rank >= CardRank::rank_2 || rank <= CardRank::max_ranks) && "Error: invalid card rank");
-
-		if (rank < CardRank::rank_jack)
-		{
-			return static_cast<int>(rank) + offset;
-		}
-		else if (rank == CardRank::rank_ace)
-		{
-			if (player_points + m_ace_high > m_maximum_value)
-				return m_ace_low;
-
-			return m_ace_high;
-		}
-
-		return 10;
-	}
-
-	void print() const
-	{
-		assert((rank >= CardRank::rank_2 || rank <= CardRank::max_ranks) && "Error: invalid card rank");
-
-		switch (rank)
-		{
-			case CardRank::rank_2:		std::cout << '2';	break;
-			case CardRank::rank_3:		std::cout << '3';	break;
-			case CardRank::rank_4:		std::cout << '4';	break;
-			case CardRank::rank_5:		std::cout << '5';	break;
-			case CardRank::rank_6:		std::cout << '6';	break;
-			case CardRank::rank_7:		std::cout << '7';	break;
-			case CardRank::rank_8:		std::cout << '8';	break;
-			case CardRank::rank_9:		std::cout << '9';	break;
-			case CardRank::rank_10:		std::cout << 'T';	break;
-			case CardRank::rank_jack:	std::cout << 'J';	break;
-			case CardRank::rank_queen:	std::cout << 'Q';	break;
-			case CardRank::rank_king:	std::cout << 'K';	break;
-			case CardRank::rank_ace:	std::cout << 'A';	break;
-			default:
-				std::cout << '?';
-				break;
-		}
-
-		switch (suit)
-		{
-			case CardSuit::clubs:		std::cout << 'C';	break;
-			case CardSuit::diamonds:	std::cout << 'D';	break;
-			case CardSuit::hearts:		std::cout << 'H';	break;
-			case CardSuit::spades:		std::cout << 'S';	break;
-			default:
-				std::cout << '?';
-				break;
-		}
-	}
+	CardRank get_rank() const;
+	CardSuit get_suit() const;
+	int get_value(int player_points = 0) const;
+	void print() const;
+	void set_rank(CardRank card_rank);
+	void set_suit(CardSuit card_suit);
 
 private:
 	static constexpr uint8_t m_maximum_value{21};
@@ -98,6 +47,9 @@ private:
 	static constexpr uint8_t m_ace_low{1};
 
 	int offset{ 2 - static_cast<int>(CardRank::rank_2) };
+
+	CardRank rank{};
+	CardSuit suit{};
 };
 
 #endif

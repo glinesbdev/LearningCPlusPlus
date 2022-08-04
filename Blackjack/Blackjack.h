@@ -23,18 +23,6 @@ enum class Turn
 
 class Blackjack
 {
-	// Game constants
-	static constexpr uint8_t m_total_cards{ 52 };
-	static constexpr uint8_t m_maximum_score{ 21 };
-	static constexpr uint8_t m_dealer_threshold{ 17 };
-	static constexpr uint8_t m_default_card_value{ 2 };
-
-	// Game state flags
-	static constexpr uint8_t f_show_welcome_message{ 1 << 0 };
-	static constexpr uint8_t f_game_over{ 1 << 1 };
-	static constexpr uint8_t f_player_won{ 1 << 2 };
-	static constexpr uint8_t f_game_tie{ 1 << 3 };
-
 public:
 	Blackjack();
 
@@ -52,6 +40,7 @@ private:
 	void house_turn();
 	void player_turn();
 	void print_controls();
+	void print_current_hand();
 	void print_game_summary();
 	void print_hand(const hand_type& hand);
 	void print_welcome();
@@ -63,6 +52,18 @@ private:
 	void unset_game_states(const std::vector<uint8_t>& states);
 
 private:
+	// Game constants
+	static constexpr uint8_t m_total_cards{ 52 };
+	static constexpr uint8_t m_maximum_score{ 21 };
+	static constexpr uint8_t m_dealer_threshold{ 17 };
+	static constexpr uint8_t m_default_card_value{ 2 };
+
+	// Game state flags
+	static constexpr uint8_t f_show_welcome_message{ 1 << 0 };
+	static constexpr uint8_t f_game_over{ 1 << 1 };
+	static constexpr uint8_t f_player_won{ 1 << 2 };
+	static constexpr uint8_t f_game_tie{ 1 << 3 };
+
 	index_type card_index{};
 	deck_type deck{};
 	uint8_t game_state{ f_show_welcome_message };

@@ -14,6 +14,7 @@ bool Blackjack::play()
 
 	std::cout << "House and Player have been delt\n";
 	std::cout << std::format("You have {} points\n", player.get_points());
+	print_current_hand();
 
 	while (!get_game_state(f_game_over))
 	{
@@ -35,9 +36,7 @@ bool Blackjack::play()
 			continue;
 
 		std::cout << std::format("You have {} points\n", player.get_points());
-		std::cout << "Current cards: ";
-		print_hand(player.get_hand());
-		std::cout << '\n';
+		print_current_hand();
 	}
 
 	print_game_summary();
@@ -124,8 +123,8 @@ deck_type Blackjack::create_deck()
 	{
 		for (int rank{ 0 }; rank < static_cast<int>(CardRank::max_ranks); ++rank)
 		{
-			new_deck[index].rank = static_cast<CardRank>(rank);
-			new_deck[index].suit = static_cast<CardSuit>(suit);
+			new_deck[index].set_rank(static_cast<CardRank>(rank));
+			new_deck[index].set_suit(static_cast<CardSuit>(suit));
 			++index;
 		}
 	}
@@ -192,6 +191,13 @@ void Blackjack::print_controls()
 	std::cout << std::format("Hit = {}, Stand = {}: ", static_cast<int>(Turn::hit), static_cast<int>(Turn::stand));
 }
 
+void Blackjack::print_current_hand()
+{
+	std::cout << "Current cards: ";
+	print_hand(player.get_hand());
+	std::cout << '\n';
+}
+
 void Blackjack::print_game_summary()
 {
 	if (get_game_state(f_player_won))
@@ -219,9 +225,8 @@ void Blackjack::print_game_summary()
 		std::cout << "********************\n\n";
 	}
 
-	std::cout << "Player had ";
-	print_hand(player.get_hand());
-	std::cout << "cards in their hand\n";
+	std::cout << "Player had these cards: ";
+	print_current_hand();
 
 	std::cout << std::format("Player had {} points\n", player.get_points());
 	std::cout << std::format("House had {} points\n", house.get_points());
@@ -246,7 +251,7 @@ void Blackjack::print_welcome()
 
 void Blackjack::reset_game()
 {
-	// All the cards will be 2 points if the deck wasn't created yet.
+	// All the cards will be 2 points if the deck wasn't "created" yet.
 	// Prevent a new deck from being created if the player plays more than 1 round.
 	auto has_default_value
 	{

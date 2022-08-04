@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClCompile Include="..\Blackjack\Blackjack.cpp" />
     <ClCompile Include="..\Blackjack\Player.cpp" />
+    <ClCompile Include="Card.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

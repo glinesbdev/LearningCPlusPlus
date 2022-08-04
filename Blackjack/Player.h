@@ -3,6 +3,7 @@
 
 #include "Card.h"
 
+#include <algorithm>
 #include <array>
 #include <iostream>
 #include <numeric>
