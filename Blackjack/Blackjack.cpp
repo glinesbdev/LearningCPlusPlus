@@ -69,8 +69,10 @@ void Blackjack::check_house_win()
 	{
 		set_game_states({ f_player_won, f_game_over });
 	}
-
-	check_game_tie();
+	else
+	{
+		check_game_tie();
+	}
 }
 
 void Blackjack::check_game_tie()
@@ -98,8 +100,10 @@ void Blackjack::check_player_win()
 	{
 		set_game_state(f_player_won);
 	}
-
-	check_game_tie();
+	else
+	{
+		check_game_tie();
+	}
 }
 
 void Blackjack::check_remaining_cards()
