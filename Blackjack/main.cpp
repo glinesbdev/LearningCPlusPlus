@@ -5,11 +5,9 @@
 int main()
 {
 	Blackjack game{};
+	Blackjack::GameStats stats{ game.play() };
 
-	bool did_player_win{ game.play() };
-
-	std::cout << std::boolalpha;
-	std::cout << std::format("Did the player win? {}\n", did_player_win);
+	std::cout << std::format("***** Game Stats *****\nGames won: {}\nGames tied: {}\nGames lost: {}\n", stats.games_won, stats.games_tied, stats.games_lost);
 
 	return 0;
 }

@@ -7,14 +7,14 @@ Blackjack::Blackjack()
 	reset_game();
 }
 
-bool Blackjack::play()
+Blackjack::GameStats Blackjack::play()
 {
 	if (get_game_state(f_show_welcome_message))
 		print_welcome();
 
 	std::cout << "House and Player have been delt\n";
 	std::cout << std::format("You have {} points\n", player.get_points());
-	print_current_hand();
+	player.print_hand();
 
 	while (!get_game_state(f_game_over))
 	{
@@ -36,7 +36,7 @@ bool Blackjack::play()
 			continue;
 
 		std::cout << std::format("You have {} points\n", player.get_points());
-		print_current_hand();
+		player.print_hand();
 	}
 
 	print_game_summary();
@@ -52,7 +52,7 @@ bool Blackjack::play()
 		play();
 	}
 
-	return get_game_state(f_player_won);
+	return game_stats;
 }
 
 // PRIVATE METHODS
@@ -140,9 +140,9 @@ void Blackjack::house_turn()
 		give_card(house);
 }
 
-bool Blackjack::get_game_state(uint8_t state)
+bool Blackjack::get_game_state(std::byte state)
 {
-	return game_state & state;
+	return static_cast<bool>(game_state & state);
 }
 
 Card& Blackjack::give_card(Player& p)
@@ -191,17 +191,12 @@ void Blackjack::print_controls()
 	std::cout << std::format("Hit = {}, Stand = {}: ", static_cast<int>(Turn::hit), static_cast<int>(Turn::stand));
 }
 
-void Blackjack::print_current_hand()
-{
-	std::cout << "Current cards: ";
-	print_hand(player.get_hand());
-	std::cout << '\n';
-}
-
 void Blackjack::print_game_summary()
 {
 	if (get_game_state(f_player_won))
 	{				 
+		game_stats.games_won += 1;
+
 		std::cout << "\n\n********************\n";
 		std::cout << "*                  *\n";
 		std::cout << "*    Player Won!   *\n";
@@ -210,6 +205,8 @@ void Blackjack::print_game_summary()
 	}
 	else if (get_game_state(f_game_tie))
 	{
+		game_stats.games_tied += 1;
+
 		std::cout << "\n\n********************\n";
 		std::cout << "*                  *\n";
 		std::cout << "*       Tie!       *\n";
@@ -218,6 +215,7 @@ void Blackjack::print_game_summary()
 	}
 	else
 	{
+		game_stats.games_lost += 1;
 		std::cout << "\n\n********************\n";
 		std::cout << "*                  *\n";
 		std::cout << "*    House Won!    *\n";
@@ -226,20 +224,11 @@ void Blackjack::print_game_summary()
 	}
 
 	std::cout << "Player had these cards: ";
-	print_current_hand();
+	player.print_hand();
 
 	std::cout << std::format("Player had {} points\n", player.get_points());
 	std::cout << std::format("House had {} points\n", house.get_points());
 	std::cout << std::format("Game took {} turns to complete\n\n", total_turns);
-}
-
-void Blackjack::print_hand(const hand_type& hand)
-{
-	for (auto& card : hand)
-	{
-		card.print();
-		std::cout << ' ';
-	}
 }
 
 void Blackjack::print_welcome()
@@ -251,7 +240,7 @@ void Blackjack::print_welcome()
 
 void Blackjack::reset_game()
 {
-	// All the cards will be 2 points if the deck wasn't "created" yet.
+	// All the cards will be 2 points if the deck wasn't created yet.
 	// Prevent a new deck from being created if the player plays more than 1 round.
 	auto has_default_value
 	{
@@ -268,9 +257,11 @@ void Blackjack::reset_game()
 
 	unset_game_states({ f_game_over, f_player_won, f_game_tie });
 
+	house = Player{};
 	house.set_starting_hand(deck[0], deck[1]);
 	check_house_win();
 
+	player = Player{};
 	player.set_starting_hand(deck[2], deck[3]);
 	check_player_win();
 
@@ -279,14 +270,14 @@ void Blackjack::reset_game()
 	total_turns = 0;
 }
 
-void Blackjack::set_game_state(uint8_t state)
+void Blackjack::set_game_state(std::byte state)
 {
 	game_state |= state;
 }
 
-void Blackjack::set_game_states(const std::vector<uint8_t>& states)
+void Blackjack::set_game_states(const std::vector<std::byte>& states)
 {
-	std::for_each(states.begin(), states.end(), [this](uint8_t state) { set_game_state(state); });
+	std::for_each(states.begin(), states.end(), [this](std::byte state) { set_game_state(state); });
 }
 
 void Blackjack::shuffle_deck(deck_type& d)
@@ -295,12 +286,12 @@ void Blackjack::shuffle_deck(deck_type& d)
 	std::shuffle(std::begin(d), std::end(d), mt);
 }
 
-void Blackjack::unset_game_state(uint8_t state)
+void Blackjack::unset_game_state(std::byte state)
 {
 	game_state &= ~state;
 }
 
-void Blackjack::unset_game_states(const std::vector<uint8_t>& states)
+void Blackjack::unset_game_states(const std::vector<std::byte>& states)
 {
-	std::for_each(states.begin(), states.end(), [this](uint8_t state) { unset_game_state(state); });
+	std::for_each(states.begin(), states.end(), [this](std::byte state) { unset_game_state(state); });
 }

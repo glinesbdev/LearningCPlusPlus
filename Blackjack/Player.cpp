@@ -7,6 +7,19 @@ int Player::get_points()
     return points;
 }
 
+void Player::print_hand()
+{
+    std::cout << "Current cards: ";
+
+    for (auto& card : get_hand())
+    {
+        card.print();
+        std::cout << ' ';
+    }
+
+    std::cout << '\n';
+}
+
 hand_type Player::get_hand()
 {
     // Sort the cards from lowest rank to highest

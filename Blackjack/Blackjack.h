@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstddef>
 #include <ctime>
 #include <format>
 #include <iostream>
@@ -13,6 +14,7 @@
 #include <vector>
 
 using deck_type = std::array<Card, 52>;
+using hand_type = std::vector<Card>;
 using index_type = deck_type::size_type;
 
 enum class Turn
@@ -26,8 +28,15 @@ class Blackjack
 public:
 	Blackjack();
 
+	struct GameStats
+	{
+		int games_won;
+		int games_lost;
+		int games_tied;
+	};
+
 public:
-	bool play();
+	GameStats play();
 
 private:
 	void check_house_win();
@@ -35,21 +44,19 @@ private:
 	void check_player_win();
 	void check_remaining_cards();
 	deck_type create_deck();
-	bool get_game_state(uint8_t state);
+	bool get_game_state(std::byte state);
 	Card& give_card(Player& player);
 	void house_turn();
 	void player_turn();
 	void print_controls();
-	void print_current_hand();
 	void print_game_summary();
-	void print_hand(const hand_type& hand);
 	void print_welcome();
 	void reset_game();
-	void set_game_state(uint8_t state);
-	void set_game_states(const std::vector<uint8_t>& states);
+	void set_game_state(std::byte state);
+	void set_game_states(const std::vector<std::byte>& states);
 	void shuffle_deck(deck_type& deck);
-	void unset_game_state(uint8_t state);
-	void unset_game_states(const std::vector<uint8_t>& states);
+	void unset_game_state(std::byte state);
+	void unset_game_states(const std::vector<std::byte>& states);
 
 private:
 	// Game constants
@@ -59,17 +66,18 @@ private:
 	static constexpr uint8_t m_default_card_value{ 2 };
 
 	// Game state flags
-	static constexpr uint8_t f_show_welcome_message{ 1 << 0 };
-	static constexpr uint8_t f_game_over{ 1 << 1 };
-	static constexpr uint8_t f_player_won{ 1 << 2 };
-	static constexpr uint8_t f_game_tie{ 1 << 3 };
+	static constexpr std::byte f_show_welcome_message{ 1 << 0 };
+	static constexpr std::byte f_game_over{ 1 << 1 };
+	static constexpr std::byte f_player_won{ 1 << 2 };
+	static constexpr std::byte f_game_tie{ 1 << 3 };
 
-	index_type card_index{};
 	deck_type deck{};
-	uint8_t game_state{ f_show_welcome_message };
-	Player house{};
-	Player player{};
+	Player house;
+	Player player;
+	index_type card_index{};
 	int total_turns{ 0 };
+	GameStats game_stats{};
+	std::byte game_state{ f_show_welcome_message };
 };
 
 #endif

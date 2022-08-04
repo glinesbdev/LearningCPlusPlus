@@ -26,6 +26,7 @@ int Card::get_value(int player_points) const
 		return m_ace_high;
 	}
 
+	// 10, Jack, Queen, and King cards all have the value of 10
 	return 10;
 }
 

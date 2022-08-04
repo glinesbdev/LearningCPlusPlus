@@ -16,6 +16,7 @@ class Player
 public:
 	hand_type get_hand();
 	int get_points();
+	void print_hand();
 	void set_starting_hand(const Card& first, const Card& second);
 	void take_card(const Card& card);
 	int take_turn();
