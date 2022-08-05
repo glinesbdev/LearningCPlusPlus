@@ -42,8 +42,8 @@ private:
 private:
 	hand_type hand{};
 	int input{};
-	bool isDirty{ false };
 	int points{};
+	bool isDirty{ false };
 };
 
 #endif
