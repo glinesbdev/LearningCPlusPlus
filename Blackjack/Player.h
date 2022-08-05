@@ -14,20 +14,35 @@ using hand_type = std::vector<Card>;
 class Player
 {
 public:
-	hand_type get_hand();
-	int get_points();
-	void print_hand();
-	void set_starting_hand(const Card& first, const Card& second);
-	void take_card(const Card& card);
-	int take_turn();
+	Player() = default;
+
+	// Copy policy
+	Player(const Player& copy) = delete;
+	Player& operator=(const Player& copy) = delete;
+
+	// Move policy
+	Player(Player&& move) = delete;
+	Player& operator=(Player&& move) = delete;
+
+	~Player() = default;
+
+public:
+	hand_type GetHand();
+	int GetPoints();
+	void PrintHand();
+	void Reset();
+	void SetStartingHand(const Card& first, const Card& second);
+	void TakeCard(const Card& card);
+	int TakeTurn();
 
 private:
-	int get_hand_value();
-	void set_points();
+	int getHandValue();
+	void setPoints();
 
 private:
 	hand_type hand{};
 	int input{};
+	bool isDirty{ false };
 	int points{};
 };
 

@@ -1,8 +1,11 @@
 #ifndef CARD_H
 #define CARD_H
 
+#include "Constants.h"
+
 #include <cassert>
 #include <iostream>
+#include <stdint.h>
 
 enum class CardRank
 {
@@ -34,17 +37,16 @@ enum class CardSuit
 class Card
 {
 public:
-	CardRank get_rank() const;
-	CardSuit get_suit() const;
-	int get_value(int player_points = 0) const;
-	void print() const;
-	void set_rank(CardRank card_rank);
-	void set_suit(CardSuit card_suit);
+	CardRank GetRank() const;
+	CardSuit GetSuit() const;
+	int GetValue(int player_points = 0) const;
+	void Print() const;
+	void SetRank(CardRank card_rank);
+	void SetSuit(CardSuit card_suit);
 
 private:
-	inline static constexpr const uint8_t m_maximum_value{21};
-	inline static constexpr const uint8_t m_ace_high{11};
-	inline static constexpr const uint8_t m_ace_low{1};
+	static constexpr uint8_t m_aceHigh{ 11 };
+	static constexpr uint8_t m_aceLow{1};
 
 	int offset{ 2 - static_cast<int>(CardRank::rank_2) };
 

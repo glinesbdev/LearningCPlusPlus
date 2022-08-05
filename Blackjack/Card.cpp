@@ -1,16 +1,16 @@
 #include "Card.h"
 
-CardRank Card::get_rank() const
+CardRank Card::GetRank() const
 {
 	return rank;
 }
 
-CardSuit Card::get_suit() const
+CardSuit Card::GetSuit() const
 {
 	return suit;
 }
 
-int Card::get_value(int player_points) const
+int Card::GetValue(int player_points) const
 {
 	assert((rank >= CardRank::rank_2 || rank <= CardRank::max_ranks) && "Error: invalid card rank");
 
@@ -20,17 +20,17 @@ int Card::get_value(int player_points) const
 	}
 	else if (rank == CardRank::rank_ace)
 	{
-		if (player_points + m_ace_high > m_maximum_value)
-			return m_ace_low;
+		if (player_points + m_aceHigh > constants::m_maximumScore)
+			return m_aceLow;
 
-		return m_ace_high;
+		return m_aceHigh;
 	}
 
 	// 10, Jack, Queen, and King cards all have the value of 10
 	return 10;
 }
 
-void Card::print() const
+void Card::Print() const
 {
 	assert((rank >= CardRank::rank_2 || rank <= CardRank::max_ranks) && "Error: invalid card rank");
 
@@ -66,12 +66,12 @@ void Card::print() const
 	}
 }
 
-void Card::set_rank(CardRank card_rank)
+void Card::SetRank(CardRank card_rank)
 {
 	rank = card_rank;
 }
 
-void Card::set_suit(CardSuit card_suit)
+void Card::SetSuit(CardSuit card_suit)
 {
 	suit = card_suit;
 }

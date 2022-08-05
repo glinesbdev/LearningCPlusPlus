@@ -2,47 +2,56 @@
 
 // PUBLIC METHODS
 
-int Player::get_points()
+int Player::GetPoints()
 {
     return points;
 }
 
-void Player::print_hand()
+void Player::PrintHand()
 {
     std::cout << "Current cards: ";
 
-    for (auto& card : get_hand())
+    for (auto& card : GetHand())
     {
-        card.print();
+        card.Print();
         std::cout << ' ';
     }
 
     std::cout << '\n';
 }
 
-hand_type Player::get_hand()
+void Player::Reset()
+{
+    if (isDirty)
+    {
+        points = 0;
+        isDirty = false;
+    }
+}
+
+hand_type Player::GetHand()
 {
     // Sort the cards from lowest rank to highest
     // so that the ace is calculated properly against
     // the points the player currently has.
-    std::sort(hand.begin(), hand.end(), [](const Card& lhs, const Card& rhs) { return lhs.get_rank() < rhs.get_rank(); });
+    std::sort(hand.begin(), hand.end(), [](const Card& lhs, const Card& rhs) { return lhs.GetRank() < rhs.GetRank(); });
 
     return hand;
 }
 
-void Player::set_starting_hand(const Card& first, const Card& second)
+void Player::SetStartingHand(const Card& first, const Card& second)
 {
     hand = { first, second };
-    points = get_hand_value();
+    setPoints();
 }
 
-void Player::take_card(const Card& card)
+void Player::TakeCard(const Card& card)
 {
     hand.push_back(card);
-    set_points();
+    setPoints();
 }
 
-int Player::take_turn()
+int Player::TakeTurn()
 {
     std::cin >> input;
 
@@ -51,19 +60,20 @@ int Player::take_turn()
 
 // PRIVATE METHODS
 
-int Player::get_hand_value()
+int Player::getHandValue()
 {
     int result{};
 
-    for (auto& card : get_hand())
+    for (auto& card : GetHand())
     {
-        result += card.get_value(points);
+        result += card.GetValue(points);
     }
 
     return result;
 }
 
-void Player::set_points()
+void Player::setPoints()
 {
-    points = get_hand_value();
+    points = getHandValue();
+    isDirty = true;
 }

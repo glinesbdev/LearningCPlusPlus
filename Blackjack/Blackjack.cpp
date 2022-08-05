@@ -4,42 +4,42 @@
 
 Blackjack::Blackjack()
 {
-	reset_game();
+	resetGame();
 }
 
-Blackjack::GameStats Blackjack::play()
+Blackjack::GameStats Blackjack::Play()
 {
-	if (has_game_state(f_show_welcome_message))
-		print_welcome();
+	if (hasGameState(f_showIntroMessage))
+		printIntro();
 
 	std::cout << "House and Player have been delt\n";
-	std::cout << std::format("You have {} points\n", player.get_points());
-	player.print_hand();
+	std::cout << std::format("You have {} points\n", player.GetPoints());
+	player.PrintHand();
 
-	while (!has_game_state(f_game_over))
+	while (!hasGameState(f_gameOver))
 	{
-		check_remaining_cards();
-		player_turn();
-		check_player_win();
+		checkRemainingCards();
+		playerTurn();
+		checkPlayerWin();
 
 		// prevent the game from continuing if the
 		// game is already over
-		if (has_game_state(f_game_over))
+		if (hasGameState(f_gameOver))
 			continue;
 
-		house_turn();
-		check_house_win();
+		houseTurn();
+		checkHouseWin();
 
 		// prevent the game from continuing if the
 		// game is already over
-		if (has_game_state(f_game_over))
+		if (hasGameState(f_gameOver))
 			continue;
 
-		std::cout << std::format("You have {} points\n", player.get_points());
-		player.print_hand();
+		std::cout << std::format("You have {} points\n", player.GetPoints());
+		player.PrintHand();
 	}
 
-	print_game_summary();
+	printGameSummary();
 
 	std::cout << "Do you want to play again? Yes = 1, No = 0: ";
 	int answer{};
@@ -47,78 +47,80 @@ Blackjack::GameStats Blackjack::play()
 
 	if (answer)
 	{
-		unset_game_state(f_show_welcome_message);
-		reset_game();
-		play();
+		house.Reset();
+		player.Reset();
+		unsetGameState(f_showIntroMessage);
+		resetGame();
+		Play();
 	}
 
-	return game_stats;
+	return gameStats;
 }
 
 // PRIVATE METHODS
 
-void Blackjack::check_house_win()
+void Blackjack::checkHouseWin()
 {
-	int house_points{ house.get_points() };
+	int house_points{ house.GetPoints() };
 
-	if (house_points == m_maximum_score)
+	if (house_points == constants::m_maximumScore)
 	{
-		set_game_state(f_game_over);
+		setGameState(f_gameOver);
 	}
-	else if (house_points > m_maximum_score)
+	else if (house_points > constants::m_maximumScore)
 	{
-		set_game_states({ f_player_won, f_game_over });
+		setGameStates({ f_playerWon, f_gameOver });
 	}
 	else
 	{
-		check_game_tie();
+		checkGameTie();
 	}
 }
 
-void Blackjack::check_game_tie()
+void Blackjack::checkGameTie()
 {
-	if (has_game_state(f_game_over) && player.get_points() == house.get_points())
+	if (hasGameState(f_gameOver) && player.GetPoints() == house.GetPoints())
 	{
-		set_game_state(f_game_tie);
+		setGameState(f_gameTie);
 	}
 }
 
-void Blackjack::check_player_win()
+void Blackjack::checkPlayerWin()
 {
-	int player_points{ player.get_points() };
-	int house_points{ house.get_points() };
+	int player_points{ player.GetPoints() };
+	int house_points{ house.GetPoints() };
 
-	if (player_points == m_maximum_score)
+	if (player_points == constants::m_maximumScore)
 	{
-		set_game_states({ f_player_won, f_game_over });
+		setGameStates({ f_playerWon, f_gameOver });
 	}
-	else if (player_points > m_maximum_score)
+	else if (player_points > constants::m_maximumScore)
 	{
-		set_game_state(f_game_over);
+		setGameState(f_gameOver);
 	}
-	else if (has_game_state(f_game_over) && (house_points > m_maximum_score || (player_points <= m_maximum_score && player_points > house_points)))
+	else if (hasGameState(f_gameOver) && (house_points > constants::m_maximumScore || (player_points <= constants::m_maximumScore && player_points > house_points)))
 	{
-		set_game_state(f_player_won);
+		setGameState(f_playerWon);
 	}
 	else
 	{
-		check_game_tie();
+		checkGameTie();
 	}
 }
 
-void Blackjack::check_remaining_cards()
+void Blackjack::checkRemainingCards()
 {
-	if (card_index >= m_total_cards)
+	if (cardIndex >= m_totalCards)
 	{
-		set_game_state(f_game_over);
-		check_player_win();
-		check_house_win();
+		setGameState(f_gameOver);
+		checkPlayerWin();
+		checkHouseWin();
 		std::cout << "No more cards!\n";
-		print_game_summary();
+		printGameSummary();
 	}
 }
 
-deck_type Blackjack::create_deck()
+deck_type Blackjack::createDeck()
 {
 	deck_type new_deck{};
 	index_type index{ 0 };
@@ -127,8 +129,8 @@ deck_type Blackjack::create_deck()
 	{
 		for (int rank{ 0 }; rank < static_cast<int>(CardRank::max_ranks); ++rank)
 		{
-			new_deck[index].set_rank(static_cast<CardRank>(rank));
-			new_deck[index].set_suit(static_cast<CardSuit>(suit));
+			new_deck[index].SetRank(static_cast<CardRank>(rank));
+			new_deck[index].SetSuit(static_cast<CardSuit>(suit));
 			++index;
 		}
 	}
@@ -136,49 +138,49 @@ deck_type Blackjack::create_deck()
 	return new_deck;
 }
 
-bool Blackjack::has_game_state(std::byte state)
+bool Blackjack::hasGameState(std::byte state)
 {
-	return static_cast<bool>(game_state & state);
+	return static_cast<bool>(gameState & state);
 }
 
-void Blackjack::house_turn()
+void Blackjack::houseTurn()
 {
 	std::cout << "Dealer's turn\n";
 
-	while (house.get_points() < m_dealer_threshold)
-		give_card(house);
+	while (house.GetPoints() < m_dealerThreshold)
+		giveCard(house);
 }
 
-Card& Blackjack::give_card(Player& p)
+Card& Blackjack::giveCard(Player& p)
 {
-	Card& card{ deck[card_index] };
-	p.take_card(card);
-	++card_index;
+	Card& card{ deck[cardIndex] };
+	p.TakeCard(card);
+	++cardIndex;
 
 	return card;
 }
 
-void Blackjack::player_turn()
+void Blackjack::playerTurn()
 {
 	++total_turns;
 
 	std::cout << "Your turn\n";
-	print_controls();
+	printControls();
 
-	int input{ player.take_turn() };
+	int input{ player.TakeTurn() };
 
 	switch (input)
 	{
 		case static_cast<int>(Turn::stand):
 		{
-			set_game_state(f_game_over);
+			setGameState(f_gameOver);
 			break;
 		}
 
 		case static_cast<int>(Turn::hit):
 		{
-			give_card(player);
-			check_player_win();
+			giveCard(player);
+			checkPlayerWin();
 			break;
 		}
 
@@ -190,16 +192,16 @@ void Blackjack::player_turn()
 	}
 }
 
-void Blackjack::print_controls()
+void Blackjack::printControls()
 {
 	std::cout << std::format("Hit = {}, Stand = {}: ", static_cast<int>(Turn::hit), static_cast<int>(Turn::stand));
 }
 
-void Blackjack::print_game_summary()
+void Blackjack::printGameSummary()
 {
-	if (has_game_state(f_player_won))
+	if (hasGameState(f_playerWon))
 	{				 
-		game_stats.games_won += 1;
+		gameStats.games_won += 1;
 
 		std::cout << "\n\n********************\n";
 		std::cout << "*                  *\n";
@@ -207,9 +209,9 @@ void Blackjack::print_game_summary()
 		std::cout << "*                  *\n";
 		std::cout << "********************\n\n";
 	}
-	else if (has_game_state(f_game_tie))
+	else if (hasGameState(f_gameTie))
 	{
-		game_stats.games_tied += 1;
+		gameStats.games_tied += 1;
 
 		std::cout << "\n\n********************\n";
 		std::cout << "*                  *\n";
@@ -219,7 +221,8 @@ void Blackjack::print_game_summary()
 	}
 	else
 	{
-		game_stats.games_lost += 1;
+		gameStats.games_lost += 1;
+
 		std::cout << "\n\n********************\n";
 		std::cout << "*                  *\n";
 		std::cout << "*    House Won!    *\n";
@@ -227,22 +230,21 @@ void Blackjack::print_game_summary()
 		std::cout << "********************\n\n";
 	}
 
-	std::cout << "Player had these cards: ";
-	player.print_hand();
+	player.PrintHand();
 
-	std::cout << std::format("Player had {} points\n", player.get_points());
-	std::cout << std::format("House had {} points\n", house.get_points());
+	std::cout << std::format("Player had {} points\n", player.GetPoints());
+	std::cout << std::format("House had {} points\n", house.GetPoints());
 	std::cout << std::format("Game took {} turns to complete\n\n", total_turns);
 }
 
-void Blackjack::print_welcome()
+void Blackjack::printIntro()
 {
 	std::cout << "Welcome to Blackjack!\nInstructions: ";
-	print_controls();
+	printControls();
 	std::cout << "\nGet the closest to 21 points as you can.\nIf you hit 21 points exactly, you win!\nHave less than the dealer when you choose to stand and you lose!\n";
 }
 
-void Blackjack::reset_game()
+void Blackjack::resetGame()
 {
 	// All the cards will be 2 points if the deck wasn't created yet.
 	// Prevent a new deck from being created if the player plays more than 1 round.
@@ -250,52 +252,49 @@ void Blackjack::reset_game()
 	{
 		[](const Card& card)
 		{
-			return card.get_value() == m_default_card_value;
+			return card.GetValue() == m_defaultCardValue;
 		}
 	};
 
 	if (std::all_of(std::begin(deck), std::end(deck), has_default_value))
-		deck = create_deck();
+		deck = createDeck();
 
-	shuffle_deck(deck);
+	shuffleDeck(deck);
+	unsetGameStates({ f_gameOver, f_playerWon, f_gameTie });
 
-	unset_game_states({ f_game_over, f_player_won, f_game_tie });
+	house.SetStartingHand(deck[0], deck[1]);
+	checkHouseWin();
 
-	house = Player{};
-	house.set_starting_hand(deck[0], deck[1]);
-	check_house_win();
-
-	player = Player{};
-	player.set_starting_hand(deck[2], deck[3]);
-	check_player_win();
+	player.SetStartingHand(deck[2], deck[3]);
+	checkPlayerWin();
 
 	// next card after player and house has been delt
-	card_index = 4;
+	cardIndex = 4;
 	total_turns = 0;
 }
 
-void Blackjack::set_game_state(std::byte state)
+void Blackjack::setGameState(std::byte state)
 {
-	game_state |= state;
+	gameState |= state;
 }
 
-void Blackjack::set_game_states(const std::vector<std::byte>& states)
+void Blackjack::setGameStates(const std::vector<std::byte>& states)
 {
-	std::for_each(states.begin(), states.end(), [this](std::byte state) { set_game_state(state); });
+	std::for_each(states.begin(), states.end(), [this](std::byte state) { setGameState(state); });
 }
 
-void Blackjack::shuffle_deck(deck_type& d)
+void Blackjack::shuffleDeck(deck_type& d)
 {
 	std::mt19937 mt{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 	std::shuffle(std::begin(d), std::end(d), mt);
 }
 
-void Blackjack::unset_game_state(std::byte state)
+void Blackjack::unsetGameState(std::byte state)
 {
-	game_state &= ~state;
+	gameState &= ~state;
 }
 
-void Blackjack::unset_game_states(const std::vector<std::byte>& states)
+void Blackjack::unsetGameStates(const std::vector<std::byte>& states)
 {
-	std::for_each(states.begin(), states.end(), [this](std::byte state) { unset_game_state(state); });
+	std::for_each(states.begin(), states.end(), [this](std::byte state) { unsetGameState(state); });
 }

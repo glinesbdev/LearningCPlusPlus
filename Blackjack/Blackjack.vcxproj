@@ -146,6 +146,7 @@
     <ClInclude Include="..\Blackjack\Blackjack.h" />
     <ClInclude Include="..\Blackjack\Card.h" />
     <ClInclude Include="..\Blackjack\Player.h" />
+    <ClInclude Include="Constants.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Blackjack\Blackjack.cpp" />
