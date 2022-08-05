@@ -3,6 +3,7 @@
 
 #include "Card.h"
 #include "Constants.h"
+#include "Logger.h"
 #include "Player.h"
 
 #include <algorithm>
@@ -13,6 +14,7 @@
 #include <iostream>
 #include <random>
 #include <stdint.h>
+#include <string>
 #include <vector>
 
 using deck_type = std::array<Card, 52>;
@@ -85,6 +87,7 @@ private:
 	deck_type deck{};
 	Player house{};
 	Player player{};
+	Logger logger{};
 	index_type cardIndex{};
 	int total_turns{ 0 };
 	GameStats gameStats{};

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LEARNING_STRUCTS_H
+#define LEARNING_STRUCTS_H
 
 struct Advertising
 {
@@ -12,3 +13,5 @@ struct Fraction
 	int numerator{0};
 	int denominator{1};
 };
+
+#endif

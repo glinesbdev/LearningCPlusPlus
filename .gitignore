@@ -6,6 +6,7 @@
 *.recipe*
 *.FileListAbsolute*
 *x64
+*.txt
 
 # Compiled Object files
 *.slo

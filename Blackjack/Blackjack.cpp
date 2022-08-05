@@ -232,9 +232,17 @@ void Blackjack::printGameSummary()
 
 	player.PrintHand();
 
-	std::cout << std::format("Player had {} points\n", player.GetPoints());
-	std::cout << std::format("House had {} points\n", house.GetPoints());
-	std::cout << std::format("Game took {} turns to complete\n\n", total_turns);
+	std::string output{
+		std::format(
+			"Player had {} points\nHouse had {} points\nGame took {} turns to complete\n\n",
+			player.GetPoints(),
+			house.GetPoints(),
+			total_turns
+		)
+	};
+
+	std::cout << output;
+	logger.Write("game_stats.txt", output);
 }
 
 void Blackjack::printIntro()

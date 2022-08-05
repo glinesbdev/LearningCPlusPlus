@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LEARNING_TRIAD_H
+#define LEARNING_TRIAD_H
 
 template <typename T>
 struct Triad
@@ -17,3 +18,5 @@ void print(const Triad<T>& t)
 {
 	std::cout << '[' << t.first << ", " << t.second << ", " << t.third << ']';
 }
+
+#endif
